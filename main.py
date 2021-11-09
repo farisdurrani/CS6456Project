@@ -1,38 +1,43 @@
 import pygame
-from Spaceship import update_spaceship
+from Spaceship import Spaceship
 import Colors
 import Constants
 
 
-def initiate_game():
-    pygame.init()
-    screen = pygame.display.set_mode((Constants.WINDOW_WIDTH,
-                                   Constants.WINDOW_HEIGHT))
-    pygame.display.set_caption("Spaceship Battle")
-    return screen
+class Main:
+    def __init__(self):
+        screen = self.initiate_game()
+        self.run_game(screen)
+        self.spaceship = None
 
+    def initiate_game(self):
+        pygame.init()
+        screen = pygame.display.set_mode((Constants.WINDOW_WIDTH,
+                                         Constants.WINDOW_HEIGHT))
+        pygame.display.set_caption("Spaceship Battle")
+        self.spaceship = Spaceship()
+        return screen
 
-def run_game():
-    screen = initiate_game()
-    clock = pygame.time.Clock()
-    run = True
-    while run:
-        pygame.time.delay(100)
+    def run_game(self, screen):
+        clock = pygame.time.Clock()
+        run = True
+        while run:
+            pygame.time.delay(100)
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
 
-        screen.fill(Colors.BLACK)
-        update_spaceship(screen)
-        pygame.display.update()
-        clock.tick(Constants.FPS)
+            screen.fill(Colors.BLACK)
+            self.spaceship.update_spaceship(screen)
+            pygame.display.update()
+            clock.tick(Constants.FPS)
 
-    pygame.quit()
+        pygame.quit()
 
 
 def main():
-    run_game()
+    Main()
 
 
 if __name__ == "__main__":
