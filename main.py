@@ -1,7 +1,8 @@
 import pygame
-from Spaceship import Spaceship
-import Colors
-import Constants
+from SpaceshipDir import Spaceship
+from EvilSpaceshipDir import EvilShip
+from Constants import Colors, Constants
+import MouseInstance
 
 
 class Main:
@@ -9,18 +10,21 @@ class Main:
         screen = self.initiate_game()
         self.run_game(screen)
         self.spaceship = None
+        self.evil_ship = None
 
     def initiate_game(self):
         pygame.init()
         screen = pygame.display.set_mode((Constants.WINDOW_WIDTH,
                                          Constants.WINDOW_HEIGHT))
         pygame.display.set_caption("Spaceship Battle")
-        self.spaceship = Spaceship()
+        self.spaceship = Spaceship.Spaceship()
+        self.evil_ship = EvilShip.EvilShip()
         return screen
 
     def run_game(self, screen):
         clock = pygame.time.Clock()
         run = True
+
         while run:
             pygame.time.delay(100)
 
@@ -29,7 +33,16 @@ class Main:
                     run = False
 
             screen.fill(Colors.BLACK)
-            self.spaceship.update_spaceship(screen)
+            mouse_instance = MouseInstance.MouseInstance()
+
+            # pygame.draw.rect(screen, Colors.WHITE, (Constants.CENTER_X, Constants.CENTER_Y, 2, 2))
+            self.spaceship.update_spaceship(screen, mouse_instance)
+
+            center = self.evil_ship.update_evil_ship(screen, mouse_instance)
+            pygame.draw.rect(screen, Colors.WHITE,
+                             (center[0], center[1], 2, 2))
+
+
             pygame.display.update()
             clock.tick(Constants.FPS)
 
