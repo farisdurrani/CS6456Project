@@ -1,6 +1,6 @@
 import pygame
 
-from Constants import Colors, Constants
+from ConstantVars import Colors, Constants
 from MouseInstance import MouseInstance
 import math
 

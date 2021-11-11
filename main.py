@@ -1,7 +1,7 @@
 import pygame
 from SpaceshipDir import Spaceship
 from EvilSpaceshipDir import EvilShip
-from Constants import Colors, Constants
+from ConstantVars import Colors, Constants
 import MouseInstance
 
 
@@ -35,7 +35,7 @@ class Main:
             screen.fill(Colors.BLACK)
             mouse_instance = MouseInstance.MouseInstance()
 
-            # pygame.draw.rect(screen, Colors.WHITE, (Constants.CENTER_X, Constants.CENTER_Y, 2, 2))
+            # pygame.draw.rect(screen, Colors.WHITE, (ConstantVars.CENTER_X, ConstantVars.CENTER_Y, 2, 2))
             self.spaceship.update_spaceship(screen, mouse_instance)
 
             center = self.evil_ship.update_evil_ship(screen, mouse_instance)
