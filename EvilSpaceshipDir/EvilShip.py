@@ -27,7 +27,6 @@ class EvilShip:
         self.update_coords(mouse_instance)
         self.fire_bullets(screen, center)
         screen.blit(self.rotated_image, self.top_left)
-        return self.get_center()
 
     def update_rotation(self, center: list):
         y_delta_from_center = center[1] - Constants.CENTER_Y
@@ -104,6 +103,7 @@ class EvilSpaceshipBullet:
         self.define_x_y_velocity(angle_rotation)
         # print(self.x_velocity, self.y_velocity)
         self.out_of_range = False
+        self.damage = 5
 
     def update_screen_pos(self, screen):
         self.update_coord()
@@ -134,3 +134,9 @@ class EvilSpaceshipBullet:
         self.coord[1] = self.coord[1] + self.y_velocity
         if GenFunctions.out_of_range(self.coord[0], self.coord[1]):
             self.out_of_range = True
+
+    def get_coord(self) -> list:
+        return self.coord
+
+    def get_damage(self) -> int:
+        return self.damage

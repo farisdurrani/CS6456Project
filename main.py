@@ -17,7 +17,7 @@ class Main:
         screen = pygame.display.set_mode((Constants.WINDOW_WIDTH,
                                          Constants.WINDOW_HEIGHT))
         pygame.display.set_caption("Spaceship Battle")
-        self.spaceship = Spaceship.Spaceship()
+        self.spaceship = Spaceship.Spaceship(screen)
         self.evil_ship = EvilShip.EvilShip()
         return screen
 
@@ -37,11 +37,12 @@ class Main:
 
             # pygame.draw.rect(screen, Colors.WHITE, (ConstantVars.CENTER_X, ConstantVars.CENTER_Y, 2, 2))
             self.spaceship.update_spaceship(screen, mouse_instance)
-
-            center = self.evil_ship.update_evil_ship(screen, mouse_instance)
-            pygame.draw.rect(screen, Colors.WHITE,
-                             (center[0], center[1], 2, 2))
-
+            self.evil_ship.update_evil_ship(screen, mouse_instance)
+            for evil_bullet in self.evil_ship.bullets:
+                self.spaceship.analyze_hit(evil_bullet.get_coord(),
+                                           evil_bullet.get_damage())
+            # pygame.draw.rect(screen, Colors.WHITE,
+            #                  (center[0], center[1], 2, 2))
 
             pygame.display.update()
             clock.tick(Constants.FPS)

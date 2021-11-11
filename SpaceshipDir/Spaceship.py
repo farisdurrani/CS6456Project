@@ -6,22 +6,67 @@ import math
 
 
 class Spaceship:
-    def __init__(self):
+    def __init__(self, screen):
+        # ship characteristics
         self.angle_from_center = 0  # counterclockwise, in deg
-        self.spaceship_image = pygame.image.load(
+        self.MAX_HEALTH = 100
+        self.health = self.MAX_HEALTH
+        self.bullets = []
+
+        # loading ship image
+        raw_spaceship_image = pygame.image.load(
             r'SpaceshipDir\\spaceship_icon.png')
         SPACESHIP_HEIGHT = 80
-        self.spaceship_image = pygame.transform.scale(self.spaceship_image,
+        self.spaceship_image = pygame.transform.scale(raw_spaceship_image,
                                                       (SPACESHIP_HEIGHT,
                                                        SPACESHIP_HEIGHT))
         spaceship_image_width = self.spaceship_image.get_width()
         spaceship_image_height = self.spaceship_image.get_height()
+        self.top_left = tuple()
+        self.edges = self.define_edges(
+            spaceship_image_width, spaceship_image_height)
+
+        # loading variables for health bar
+        self.health_bar_pos = [
+            int(Constants.CENTER_X - Constants.HEALTH_BAR_LEN / 2),
+            self.edges["top_right"][1]
+        ]
+
+    def define_edges(self, spaceship_image_width, spaceship_image_height) \
+            -> dict:
         self.top_left = (
             Constants.CENTER_X - spaceship_image_width / 2,
             Constants.CENTER_Y - spaceship_image_height / 2)
-        self.bullets = []
+        top_right = (
+            Constants.CENTER_X + spaceship_image_width / 2,
+            Constants.CENTER_Y - spaceship_image_height / 2)
+        bottom_left = (
+            Constants.CENTER_X - spaceship_image_width / 2,
+            Constants.CENTER_Y + spaceship_image_height / 2)
+        bottom_right = (
+            Constants.CENTER_X + spaceship_image_width / 2,
+            Constants.CENTER_Y + spaceship_image_height / 2)
+        return {
+            "top_left": self.top_left,
+            "top_right": top_right,
+            "bottom_left": bottom_left,
+            "bottom_right": bottom_right
+        }
+
+    def update_health_bar(self, screen):
+        pygame.draw.rect(screen, Colors.WHITE, (self.health_bar_pos[0],
+                                                self.health_bar_pos[1],
+                                                Constants.HEALTH_BAR_LEN,
+                                                Constants.HEALTH_BAR_HEIGHT))
+        current_bar_len = self.health / self.MAX_HEALTH \
+                          * Constants.HEALTH_BAR_LEN
+        pygame.draw.rect(screen, Colors.RED, (self.health_bar_pos[0],
+                                                self.health_bar_pos[1],
+                                                current_bar_len,
+                                                Constants.HEALTH_BAR_HEIGHT))
 
     def update_spaceship(self, screen, mouse_instance: MouseInstance):
+        self.update_health_bar(screen)
         self.update_spaceship_rotation(screen, mouse_instance)
         self.fire_bullets(screen, mouse_instance)
 
@@ -42,6 +87,16 @@ class Spaceship:
         for bullet_to_remove in bullets_to_remove:
             self.bullets.pop(bullet_to_remove)
 
+    def analyze_hit(self, bullet_coord: list, damage: int):
+        if self.edges["top_left"][0] <= bullet_coord[0] <= \
+                self.edges["bottom_right"][0] \
+                and self.edges["top_left"][1] <= bullet_coord[1] <= \
+                self.edges["bottom_right"][1]:
+            self.health -= damage
+
+    def is_alive(self) -> bool:
+        return self.health > 0
+
 
 class SpaceshipBullet:
     def __init__(self, mouse_instance: MouseInstance,
@@ -54,6 +109,7 @@ class SpaceshipBullet:
         self.y_velocity = int(self.velocity
                               * self.mouse_instance.unit_y_velocity)
         self.out_of_range = False
+        self.damage = 5
 
     def update_screen_pos(self, screen):
         self.update_coord()
@@ -79,3 +135,6 @@ class SpaceshipBullet:
         if self.coord[0] > Constants.WINDOW_WIDTH \
                 or self.coord[1] > Constants.WINDOW_HEIGHT:
             self.out_of_range = True
+
+    def get_damage(self) -> int:
+        return self.damage
