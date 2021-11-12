@@ -1,4 +1,5 @@
-from ConstantVars import Constants
+import pygame.draw
+from ConstantVars import Constants, Colors
 import random
 
 
@@ -13,15 +14,30 @@ def rand_coord() -> tuple:
     return x, y
 
 
-def get_quadrant(x_delta: int, y_delta: int) -> int:
+def get_quadrant(x_pos: int, y_pos: int,
+                 angle_from_center: float = None) -> int:
+    if angle_from_center is not None:
+        if angle_from_center <= 90:
+            return 2
+        elif angle_from_center <= 180:
+            return 3
+        elif angle_from_center <= 270:
+            return 4
+        else:
+            return 1
+
     # with respect to center of screen
-    x_center = Constants.CENTER_X
-    y_center = Constants.CENTER_Y
-    if x_delta >= x_center and y_delta < y_center:
+    x_center = Constants.CENTER[0]
+    y_center = Constants.CENTER[1]
+    if x_pos >= x_center and y_pos < y_center:
         return 1
-    elif x_delta < x_center and y_delta < y_center:
+    elif x_pos < x_center and y_pos < y_center:
         return 2
-    elif x_delta < x_center and y_delta >= y_center:
+    elif x_pos < x_center and y_pos >= y_center:
         return 3
-    elif x_delta >= x_center and y_delta >= y_center:
+    elif x_pos >= x_center and y_pos >= y_center:
         return 4
+
+
+def draw_point(screen, coords: list):
+    pygame.draw.rect(screen, Colors.GREEN, (coords[0], coords[1], 3, 3))
