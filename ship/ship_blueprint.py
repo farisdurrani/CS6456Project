@@ -1,5 +1,4 @@
 import random
-
 import pygame
 import MouseInstance
 
@@ -15,7 +14,8 @@ class Ship:
         self.health = self.MAX_HEALTH
         self.bullets = []
         self.has_shield = False
-        self.shield_start_time = 0
+        self.out_of_range = False
+        self.ship_paused = False
 
         # loading ship image
         raw_spaceship_image = pygame.image.load(icon)
@@ -61,22 +61,23 @@ class Ship:
 
         bullets_to_remove = set()
         for bullet_i, bullet in enumerate(self.bullets):
-            bullet.update_screen_pos(screen)
+            bullet.update_screen_pos(screen, self.ship_paused)
             if bullet.out_of_range:
                 bullets_to_remove.add(bullet_i)
 
-        for other_ship in main.all_ships:
-            if other_ship.id != self.id:
-                for bullet_i, bullet in enumerate(self.bullets):
-                    if other_ship.analyze_hit(bullet.get_coord(),
-                                              bullet.get_damage()):
-                        bullets_to_remove.add(bullet_i)
+        if not self.ship_paused:
+            for other_ship in main.all_ships:
+                if other_ship.id != self.id:
+                    for bullet_i, bullet in enumerate(self.bullets):
+                        if other_ship.analyze_hit(bullet.get_coord(),
+                                                  bullet.get_damage()):
+                            bullets_to_remove.add(bullet_i)
 
-        for bullet_to_remove in bullets_to_remove:
-            try:
-                self.bullets.pop(bullet_to_remove)
-            except IndexError:
-                self.bullets.pop()
+            for bullet_to_remove in bullets_to_remove:
+                try:
+                    self.bullets.pop(bullet_to_remove)
+                except IndexError:
+                    self.bullets.pop()
 
         bullets_to_remove.clear()
 
@@ -102,6 +103,12 @@ class Ship:
                  + self.edges["bottom_right"][1]) / 2),
         ]
 
+    def pause_ship(self):
+        self.ship_paused = True
+
+    def resume_ship(self):
+        self.ship_paused = False
+
 
 class ShipBullet:
     def __init__(self, ship_center: list, damage: int, x_velocity, y_velocity,
@@ -114,14 +121,15 @@ class ShipBullet:
         self.color = color
         self.height = height
 
-    def update_screen_pos(self, screen):
-        self.coord = [
-            self.coord[0] + self.x_velocity,
-            self.coord[1] + self.y_velocity
-        ]
-        if self.coord[0] > Constants.WINDOW_WIDTH \
-                or self.coord[1] > Constants.WINDOW_HEIGHT:
-            self.out_of_range = True
+    def update_screen_pos(self, screen, ship_paused):
+        if not ship_paused:
+            self.coord = [
+                self.coord[0] + self.x_velocity,
+                self.coord[1] + self.y_velocity
+            ]
+            if self.coord[0] > Constants.WINDOW_WIDTH \
+                    or self.coord[1] > Constants.WINDOW_HEIGHT:
+                self.out_of_range = True
         pygame.draw.rect(screen, self.color,
                          pygame.Rect(self.coord[0], self.coord[1],
                                      self.height, self.height))

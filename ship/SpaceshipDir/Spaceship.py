@@ -22,6 +22,12 @@ class Spaceship(ship_blueprint.Ship):
 
         self.BULLET_SPEED = 10
         self.SHIELD_THICKNESS = 10
+        self.SHIELD_LIFE = 4  # in seconds
+
+        self.shield_start_time = 0
+        self.time_begin_paused = 0
+        self.duration_paused = 0
+        self.rotated_image = None
 
         self.SHIELD_RADIUS = math.sqrt(
             (Constants.CENTER[0] - self.edges["top_left"][0]) ** 2 +
@@ -35,14 +41,18 @@ class Spaceship(ship_blueprint.Ship):
         ]
 
     def update_ship(self, screen, mouse_instance: MouseInstance, main):
-        self.update_spaceship_rotation(screen, mouse_instance)
-        self.update_health_bar(screen, self.health_bar_pos)
-
         if self.has_shield:
             pygame.draw.circle(screen, Colors.WHITE, tuple(Constants.CENTER),
                                self.SHIELD_RADIUS)
             pygame.draw.circle(screen, Colors.BLACK, tuple(Constants.CENTER),
                                self.SHIELD_RADIUS - self.SHIELD_THICKNESS)
+            if time.time() - self.shield_start_time - self.duration_paused \
+                    > self.SHIELD_LIFE:
+                self.remove_shield()
+        self.update_health_bar(screen, self.health_bar_pos)
+        self.update_spaceship_rotation(screen, mouse_instance)
+        screen.blit(self.rotated_image, self.edges["top_left"])
+
         bullet_x_velocity = self.BULLET_SPEED \
                             * mouse_instance.unit_x_displacement
         bullet_y_velocity = self.BULLET_SPEED \
@@ -50,11 +60,26 @@ class Spaceship(ship_blueprint.Ship):
         self.fire_bullets(screen, 5, bullet_x_velocity, bullet_y_velocity, main)
 
     def update_spaceship_rotation(self, screen, mouse_instance):
-        self.angle_from_center = mouse_instance.angle_from_center
-        rotated_image = pygame.transform.rotate(self.scaled_ship_image,
-                                                self.angle_from_center)
-        screen.blit(rotated_image, self.edges["top_left"])
+        if not self.ship_paused:
+            self.angle_from_center = mouse_instance.angle_from_center
+            self.rotated_image = pygame.transform.rotate(self.scaled_ship_image,
+                                                         self.angle_from_center)
 
     def add_shield(self):
         self.has_shield = True
         self.shield_start_time = time.time()
+
+    def remove_shield(self):
+        self.has_shield = False
+        self.time_begin_paused = 0
+        self.duration_paused = 0
+
+    def pause_ship(self):
+        self.ship_paused = True
+        if self.has_shield:
+            self.time_begin_paused = time.time()
+
+    def resume_ship(self):
+        self.ship_paused = False
+        if self.has_shield:
+            self.duration_paused = time.time() - self.time_begin_paused
