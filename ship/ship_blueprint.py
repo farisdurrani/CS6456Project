@@ -16,6 +16,7 @@ class Ship:
         self.has_shield = False
         self.out_of_range = False
         self.ship_paused = False
+        self.BULLET_SPEED = 10
 
         # loading ship image
         raw_spaceship_image = pygame.image.load(icon)
@@ -31,9 +32,9 @@ class Ship:
         # loading variables for health bar
 
     def update_ship(self, screen, mouse_instance: MouseInstance, main):
-        pass
+        raise NotImplementedError
 
-    def update_edges(self, top_left):
+    def update_edges(self, top_left: list):
         bottom_right = [
             top_left[0] + self.ship_image_width,
             top_left[1] + self.ship_image_height]
@@ -54,7 +55,7 @@ class Ship:
                                               current_bar_len,
                                               Constants.HEALTH_BAR_HEIGHT))
 
-    def fire_bullets(self, screen, damage, x_velocity, y_velocity, main):
+    def fire_bullets(self, screen, damage: int, x_velocity, y_velocity, main):
         ship_center = self.get_center()
         new_bullet = ShipBullet(ship_center, damage, x_velocity, y_velocity)
         self.bullets.append(new_bullet)

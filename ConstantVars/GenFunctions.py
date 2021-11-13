@@ -8,10 +8,28 @@ def out_of_range(x: int, y: int) -> bool:
             or y < 0 or y > Constants.WINDOW_HEIGHT)
 
 
-def rand_coord() -> tuple:
+def rand_coord() -> list:
     x = random.randint(0, Constants.WINDOW_WIDTH)
     y = random.randint(0, Constants.WINDOW_HEIGHT)
-    return x, y
+    return [x, y]
+
+
+def rand_coord_padded() -> list:
+    """
+    :return: a random coordinate not located near center of screen
+    """
+    CENTER_PADDING = 40
+    if random.random() >= 0.5:
+        x = random.randint(Constants.CENTER[0] + CENTER_PADDING,
+                           Constants.WINDOW_WIDTH)
+    else:
+        x = random.randint(0, Constants.CENTER[0] - CENTER_PADDING)
+    if random.random() >= 0.5:
+        y = random.randint(Constants.CENTER[1] + CENTER_PADDING,
+                           Constants.WINDOW_HEIGHT)
+    else:
+        y = random.randint(0, Constants.CENTER[1] - CENTER_PADDING)
+    return [x, y]
 
 
 def get_quadrant(x_pos: int, y_pos: int,

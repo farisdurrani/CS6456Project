@@ -12,8 +12,8 @@ class EvilShip(ship_blueprint.Ship):
         # ship characteristics
         SPACESHIP_MAX_HEALTH = 100
         SPACESHIP_HEIGHT = 50
-        SPACESHIP_ICON = r'ship\\EvilSpaceshipDir\\evil_ship_icon.png'
-        top_left_init = self.generate_random_coord()
+        SPACESHIP_ICON = r'ship\\evil_ship\\evil_ship_icon.png'
+        top_left_init = GenFunctions.rand_coord_padded()
         super().__init__(SPACESHIP_MAX_HEALTH, top_left_init, SPACESHIP_HEIGHT,
                          SPACESHIP_ICON)
         self.rotated_image = self.scaled_ship_image
@@ -21,20 +21,6 @@ class EvilShip(ship_blueprint.Ship):
         self.BULLET_SPEED = 10
         self.out_of_range = False
         self.health = SPACESHIP_MAX_HEALTH
-
-    def generate_random_coord(self) -> list:
-        CENTER_PADDING = 40
-        if random.random() >= 0.5:
-            x = random.randint(Constants.CENTER[0] + CENTER_PADDING,
-                               Constants.WINDOW_WIDTH)
-        else:
-            x = random.randint(0, Constants.CENTER[0] - CENTER_PADDING)
-        if random.random() >= 0.5:
-            y = random.randint(Constants.CENTER[1] + CENTER_PADDING,
-                               Constants.WINDOW_HEIGHT)
-        else:
-            y = random.randint(0, Constants.CENTER[1] - CENTER_PADDING)
-        return [x, y]
 
     def update_ship(self, screen, mouse_instance: MouseInstance, main):
         if not self.ship_paused:
@@ -48,8 +34,8 @@ class EvilShip(ship_blueprint.Ship):
         self.update_health_bar(screen, health_bar_pos)
 
         bullet_velocity = self.generate_bullet_velocity()
-        self.fire_bullets(screen, 5, bullet_velocity[0], bullet_velocity[1],
-                          main)
+        self.fire_bullets(screen, Constants.BULLET_DAMAGE, bullet_velocity[0],
+                          bullet_velocity[1], main)
         screen.blit(self.rotated_image, self.edges["top_left"])
 
     def generate_bullet_velocity(self) -> list:

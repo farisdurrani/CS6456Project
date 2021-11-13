@@ -12,7 +12,7 @@ class Spaceship(ship_blueprint.Ship):
         # ship characteristics
         SPACESHIP_MAX_HEALTH = 1000
         SPACESHIP_HEIGHT = 80
-        SPACESHIP_ICON = r'ship\\SpaceshipDir\\spaceship_icon.png'
+        SPACESHIP_ICON = r'ship\\spaceship\\spaceship_icon.png'
         TOP_LEFT = [
             int(Constants.CENTER[0] - SPACESHIP_HEIGHT / 2),
             int(Constants.CENTER[1] - SPACESHIP_HEIGHT / 2)
@@ -50,7 +50,7 @@ class Spaceship(ship_blueprint.Ship):
                     > self.SHIELD_LIFE:
                 self.remove_shield()
         self.update_health_bar(screen, self.health_bar_pos)
-        self.update_spaceship_rotation(screen, mouse_instance)
+        self.update_spaceship_rotation(mouse_instance)
         screen.blit(self.rotated_image, self.edges["top_left"])
 
         bullet_x_velocity = self.BULLET_SPEED \
@@ -59,7 +59,7 @@ class Spaceship(ship_blueprint.Ship):
                             * mouse_instance.unit_y_displacement
         self.fire_bullets(screen, 5, bullet_x_velocity, bullet_y_velocity, main)
 
-    def update_spaceship_rotation(self, screen, mouse_instance):
+    def update_spaceship_rotation(self, mouse_instance):
         if not self.ship_paused:
             self.angle_from_center = mouse_instance.angle_from_center
             self.rotated_image = pygame.transform.rotate(self.scaled_ship_image,
@@ -76,6 +76,7 @@ class Spaceship(ship_blueprint.Ship):
 
     def pause_ship(self):
         self.ship_paused = True
+        print("paused")
         if self.has_shield:
             self.time_begin_paused = time.time()
 
