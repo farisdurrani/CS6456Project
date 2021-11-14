@@ -1,5 +1,3 @@
-import math
-
 from ship import ship_blueprint
 from ConstantVars import GenFunctions, Constants, Colors
 import MouseInstance

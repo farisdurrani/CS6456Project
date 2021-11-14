@@ -1,11 +1,11 @@
 import math
 from ConstantVars import Constants, GenFunctions
-import pygame
 
 
 class MouseInstance:
-    def __init__(self):
-        self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
+    def __init__(self, scaled_pupil_right_coords: list):
+        # self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
+        self.mouse_x, self.mouse_y = scaled_pupil_right_coords
         x_delta = self.mouse_x - Constants.CENTER[0]
         y_delta = self.mouse_y - Constants.CENTER[1]
         self.quadrant = GenFunctions.get_quadrant(self.mouse_x, self.mouse_y)
