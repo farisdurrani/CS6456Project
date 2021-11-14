@@ -10,7 +10,7 @@ from ship import ship_blueprint
 class Spaceship(ship_blueprint.Ship):
     def __init__(self):
         # ship characteristics
-        SPACESHIP_MAX_HEALTH = 1000
+        SPACESHIP_MAX_HEALTH = 10000
         SPACESHIP_HEIGHT = 80
         SPACESHIP_ICON = r'ship\\spaceship\\spaceship_icon.png'
         TOP_LEFT = [
@@ -76,7 +76,6 @@ class Spaceship(ship_blueprint.Ship):
 
     def pause_ship(self):
         self.ship_paused = True
-        print("paused")
         if self.has_shield:
             self.time_begin_paused = time.time()
 

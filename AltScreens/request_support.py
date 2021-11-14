@@ -1,6 +1,7 @@
 import random
 from ConstantVars import Constants, Colors
 import pygame.draw
+from Utilities.button import Button
 
 
 class RequestSupport:
@@ -10,6 +11,9 @@ class RequestSupport:
         self.FRIEND_PIC_HEIGHT = 50
         self.GENERAL_MARGIN = 10
         self.LEFT_MARGIN = 20
+        self.reset_friends()
+        self.buttons = []
+        self.draw_apply_button()
 
     def draw_background(self, screen):
         # citation for translucent: https://stackoverflow.com/questions/
@@ -107,12 +111,31 @@ class RequestSupport:
     def update_gui(self, screen, event=None):
         self.draw_background(screen)
 
+        for button in self.buttons:
+            button.update_button(screen, event)
+            if button.btn_type == "APPLY" and button.is_enabled():
+                return self.friends_requested
+
         for friend_i, friend in enumerate(self.available_friends):
             # draw friends pictures
             self.draw_friends_pictures(screen, friend_i, friend)
 
             # draw boxes for Request Support button
             self.draw_support_buttons(screen, friend_i, friend, event)
+
+        return None
+
+    def draw_apply_button(self):
+        APPLY_BUTTON_DIM = [
+            150, 40
+        ]
+        APPLY_BUTTON_TOP_LEFT = [
+            Constants.WINDOW_WIDTH * 3 / 4 - APPLY_BUTTON_DIM[0] / 2,
+            Constants.WINDOW_HEIGHT * 0.9
+        ]
+        apply_button = Button("Apply", Constants.FONTS["HEADING_1_FONT"],
+                              APPLY_BUTTON_DIM, APPLY_BUTTON_TOP_LEFT, "APPLY")
+        self.buttons.append(apply_button)
 
     def reset_friends(self):
         FRIEND_NAMES = ["Aman", "Bo", "Charlie",

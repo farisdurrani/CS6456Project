@@ -19,6 +19,7 @@ class Main:
         self.finger_id = set()
         self.game_is_paused = False
         self.req_support = None
+        self.MINIMUM_SHIPS = 5
 
         screen = self.initiate_game()
         self.run_game(screen)
@@ -36,12 +37,8 @@ class Main:
         self.all_ships.append(self.spaceship)
         for _ in range(random.randint(1, 10)):
             evil_ship = EvilShip.EvilShip()
-            ally_ship = friend_ship.FriendShip("Bob")
             self.all_ships.append(evil_ship)
-            self.all_ships.append(ally_ship)
 
-        # make request support screen
-        self.req_support = RequestSupport()
         return screen
 
     def run_game(self, screen):
@@ -93,8 +90,7 @@ class Main:
                                 .get_template_answer()
                         print(f"drawing_candidate = {drawing_candidate}")
                         if drawing_candidate == ">":
-                            self.pause_game()
-                            self.req_support.reset_friends()
+                            self.request_support()
                         elif drawing_candidate == "O":
                             self.spaceship.add_shield()
                     self.finger_x_array.clear()
@@ -103,11 +99,14 @@ class Main:
 
             # update request support screen
             if self.game_is_paused:
-                self.req_support.update_gui(screen, event)
+                friends_requested = self.req_support.update_gui(screen, event)
+                if friends_requested is not None:
+                    self.add_allies(friends_requested)
+                    self.resume_game()
 
         screen.fill(Colors.BLACK)
         self.update_ships_and_bullets(screen)
-        if self.game_is_paused:
+        if self.game_is_paused and self.req_support is not None:
             self.req_support.update_gui(screen, None)
 
         return run
@@ -124,6 +123,14 @@ class Main:
         for ship in self.all_ships:
             ship.resume_ship()
 
+    def add_allies(self, friends_requested):
+        for friend in friends_requested:
+            self.all_ships.append(friend_ship.FriendShip(friend))
+
+    def request_support(self):
+        self.req_support = RequestSupport()
+        self.pause_game()
+
     def update_ships_and_bullets(self, screen):
         mouse_instance = MouseInstance.MouseInstance()
         ships_to_remove = set()
@@ -133,7 +140,14 @@ class Main:
                 ships_to_remove.add(ship_i)
         # remove ships out of range
         for ship_to_remove in ships_to_remove:
-            self.all_ships.pop(ship_to_remove)
+            try:
+                self.all_ships.pop(ship_to_remove)
+            except IndexError:
+                print(ship_to_remove)
+        ships_to_remove.clear()
+
+        if len(self.all_ships) < self.MINIMUM_SHIPS:
+            self.all_ships.append(EvilShip.EvilShip())
 
 
 def main():

@@ -5,6 +5,7 @@ from ConstantVars import GenFunctions, Constants, Colors
 import MouseInstance
 import random
 import pygame
+import time
 
 
 class FriendShip(ship_blueprint.Ship):
@@ -18,6 +19,10 @@ class FriendShip(ship_blueprint.Ship):
                          FRIEND_SHIP_ICON)
         self.SPEED = 8
         self.friend_name = friend_name
+        self.time_initiated = time.time()
+        self.TIME_LIMIT = 3  # in seconds
+        self.time_begin_paused = 0  # in seconds
+        self.duration_paused = 0
 
     def update_ship(self, screen, mouse_instance: MouseInstance, main):
         health_bar_pos = [
@@ -40,11 +45,7 @@ class FriendShip(ship_blueprint.Ship):
         # rotate and move ship
         if not self.ship_paused:
             self.angle_from_center = random.randint(0, 359)
-            self.edges["top_left"] = [
-                self.edges["top_left"][0] + self.SPEED * x_unit_velocity,
-                self.edges["top_left"][1] + self.SPEED * y_unit_velocity
-            ]
-            self.update_edges(self.edges["top_left"])
+            self.update_coords(mouse_instance)
         rotated_image = pygame.transform. \
             rotate(self.scaled_ship_image, self.angle_from_center)
         screen.blit(rotated_image, self.edges["top_left"])
@@ -59,3 +60,30 @@ class FriendShip(ship_blueprint.Ship):
             * 3 // 4
         ]
         screen.blit(name_label, tuple(name_pos))
+
+        # kill the ship after a period of time
+        # if not self.ship_paused \
+        #         and time.time() - self.time_initiated - self.duration_paused \
+        #         > self.TIME_LIMIT:
+        #     self.out_of_range = False
+
+    def update_coords(self, mouse_instance: MouseInstance):
+        self.edges["top_left"][0] = self.edges["top_left"][0] \
+                                    - mouse_instance.unit_x_displacement \
+                                    * self.SPEED
+        self.edges["top_left"][1] = self.edges["top_left"][1] \
+                                    - mouse_instance.unit_y_displacement \
+                                    * self.SPEED
+        self.update_edges(self.edges["top_left"])
+
+        if GenFunctions.out_of_range(self.edges["top_left"][0],
+                                     self.edges["top_left"][1]):
+            self.out_of_range = True
+
+    def pause_ship(self):
+        self.ship_paused = True
+        self.time_begin_paused = time.time()
+
+    def resume_ship(self):
+        self.ship_paused = False
+        self.duration_paused = time.time() - self.time_begin_paused
