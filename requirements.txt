@@ -2,3 +2,6 @@ cmake
 numpy==1.16.1
 opencv_python==4.1.2.30
 dlib==19.16.0
+
+pygame~=2.1.0
+opencv-python~=4.1.2.30

@@ -1,14 +1,13 @@
-import time
-
 import pygame
 import random
 from ship.spaceship import Spaceship
 from ship.evil_ship import EvilShip
 from ship.friend_ship import friend_ship
 from ConstantVars import Colors, Constants
-import MouseInstance
-from nine_sq_recognizer import NineSquareRecognizer
+from Utilities import EyeGazeInstance
+from Utilities.nine_sq_recognizer import NineSquareRecognizer
 from AltScreens.request_support import RequestSupport
+from AltScreens.settings import Settings
 import cv2
 from Utilities.gaze_tracking import GazeTracking
 
@@ -16,6 +15,7 @@ from Utilities.gaze_tracking import GazeTracking
 class Main:
     def __init__(self):
         self.run = True
+        self.clock = pygame.time.Clock()
 
         self.spaceship = None
         self.all_ships = []
@@ -23,9 +23,11 @@ class Main:
         self.finger_x_array = []
         self.finger_y_array = []
         self.finger_id = set()
+        self.MINIMUM_SHIPS = 5
+
         self.game_is_paused = False
         self.req_support = None
-        self.MINIMUM_SHIPS = 5
+        self.settings_panel = None
 
         self.webcam = None
         self.gaze = None
@@ -59,9 +61,6 @@ class Main:
         return screen
 
     def run_game(self, screen):
-        clock = pygame.time.Clock()
-        self.run = True
-
         while self.run:
             pygame.time.delay(100)
 
@@ -69,7 +68,6 @@ class Main:
             self.update_components(screen)
 
             pygame.display.update()
-            clock.tick(Constants.FPS)
 
         self.exit_game()
 
@@ -116,8 +114,9 @@ class Main:
                            * Constants.WINDOW_HEIGHT
                 self.scaled_pupil_right_coords = [x_scaled, y_scaled]
 
-        if self.gaze.is_blinking():
-            print(f'True {time.time()}')
+        # blinking is disabled until better implementation is procured
+        # if self.gaze.is_blinking():
+        #     print(f'True {time.time()}')
 
         cv2.putText(new_frame, text, (60, 60), cv2.FONT_HERSHEY_DUPLEX, 2,
                     (255, 0, 0), 2)
@@ -138,8 +137,11 @@ class Main:
             self.update_ships_and_bullets(screen)
 
             # check for any inputs
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT \
+                    or (event.type == pygame.KEYDOWN
+                        and event.key == pygame.K_ESCAPE):
                 self.run = False
+                break
             elif event.type == pygame.FINGERDOWN:
                 # Citation: https://www.patreon.com/posts/
                 # finger-painting-43786073?l=fr
@@ -162,23 +164,45 @@ class Main:
                         print(f"drawing_candidate = {drawing_candidate}")
                         if drawing_candidate == ">":
                             self.request_support()
+                        elif drawing_candidate == "<":
+                            self.open_settings()
                         elif drawing_candidate == "O":
                             self.spaceship.add_shield()
                     self.finger_x_array.clear()
                     self.finger_y_array.clear()
                     self.finger_id.clear()
 
-            # update request support screen
-            if self.game_is_paused:
-                friends_requested = self.req_support.update_gui(screen, event)
-                if friends_requested is not None:
+            # update all alternative screens
+            alt_screen_returns = self.update_alt_screens(screen, event)
+            if alt_screen_returns is not None:
+                if self.req_support is not None:
+                    friends_requested = alt_screen_returns
                     self.add_allies(friends_requested)
+                    self.req_support = None
+                    self.resume_game()
+                elif self.settings_panel is not None:
+                    new_bullet_color = alt_screen_returns["bullet_color"]
+                    self.settings_panel = None
+                    self.change_spaceship_bullet_color(new_bullet_color)
                     self.resume_game()
 
         screen.fill(Colors.BLACK)
         self.update_ships_and_bullets(screen)
-        if self.game_is_paused and self.req_support is not None:
-            self.req_support.update_gui(screen, None)
+        self.update_alt_screens(screen, None)
+        self.clock.tick(Constants.FPS)
+
+    def change_spaceship_bullet_color(self, color):
+        self.spaceship.change_bullet_color(color)
+
+    def update_alt_screens(self, screen, event=None):
+        if self.game_is_paused:
+            if self.req_support is not None:
+                friends_requested = self.req_support.update_gui(screen, event)
+                return friends_requested
+            elif self.settings_panel is not None:
+                new_bullet_color = self.settings_panel.update_gui(screen, event)
+                return new_bullet_color
+        return None
 
     def pause_game(self):
         print("GAME IS PAUSED")
@@ -197,11 +221,15 @@ class Main:
             self.all_ships.append(friend_ship.FriendShip(friend))
 
     def request_support(self):
-        self.req_support = RequestSupport()
         self.pause_game()
+        self.req_support = RequestSupport()
+
+    def open_settings(self):
+        self.pause_game()
+        self.settings_panel = Settings(self.spaceship.spaceship_bullet_color)
 
     def update_ships_and_bullets(self, screen):
-        mouse_instance = MouseInstance.MouseInstance(
+        mouse_instance = EyeGazeInstance.EyeGazeInstance(
             self.scaled_pupil_right_coords)
         ships_to_remove = set()
         for ship_i, ship in enumerate(self.all_ships):

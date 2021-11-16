@@ -1,6 +1,5 @@
-import random
 import pygame
-import MouseInstance
+from Utilities import EyeGazeInstance
 import math
 
 from ConstantVars import Constants, GenFunctions
@@ -22,7 +21,7 @@ class EvilShip(ship_blueprint.Ship):
         self.out_of_range = False
         self.health = SPACESHIP_MAX_HEALTH
 
-    def update_ship(self, screen, mouse_instance: MouseInstance, main):
+    def update_ship(self, screen, mouse_instance: EyeGazeInstance, main):
         if not self.ship_paused:
             self.update_coords(mouse_instance)
             self.update_rotation()
@@ -83,7 +82,7 @@ class EvilShip(ship_blueprint.Ship):
         self.rotated_image = pygame.transform. \
             rotate(self.scaled_ship_image, self.angle_from_center)
 
-    def update_coords(self, mouse_instance: MouseInstance):
+    def update_coords(self, mouse_instance: EyeGazeInstance):
         self.edges["top_left"][0] = self.edges["top_left"][0] \
                                     - mouse_instance.unit_x_displacement \
                                     * self.SPEED

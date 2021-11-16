@@ -3,7 +3,7 @@ import pygame
 import time
 
 from ConstantVars import Colors, Constants
-from MouseInstance import MouseInstance
+from Utilities.EyeGazeInstance import EyeGazeInstance
 from ship import ship_blueprint
 
 
@@ -28,6 +28,7 @@ class Spaceship(ship_blueprint.Ship):
         self.time_begin_paused = 0
         self.duration_paused = 0
         self.rotated_image = None
+        self.spaceship_bullet_color = Colors.RED
 
         self.SHIELD_RADIUS = math.sqrt(
             (Constants.CENTER[0] - self.edges["top_left"][0]) ** 2 +
@@ -40,7 +41,7 @@ class Spaceship(ship_blueprint.Ship):
             self.edges["top_left"][1]
         ]
 
-    def update_ship(self, screen, mouse_instance: MouseInstance, main):
+    def update_ship(self, screen, mouse_instance: EyeGazeInstance, main):
         if self.has_shield:
             pygame.draw.circle(screen, Colors.WHITE, tuple(Constants.CENTER),
                                self.SHIELD_RADIUS)
@@ -57,7 +58,8 @@ class Spaceship(ship_blueprint.Ship):
                             * mouse_instance.unit_x_displacement
         bullet_y_velocity = self.BULLET_SPEED \
                             * mouse_instance.unit_y_displacement
-        self.fire_bullets(screen, 5, bullet_x_velocity, bullet_y_velocity, main)
+        self.fire_bullets(screen, 5, bullet_x_velocity, bullet_y_velocity, main,
+                          self.spaceship_bullet_color)
 
     def update_spaceship_rotation(self, mouse_instance):
         if not self.ship_paused:
@@ -83,3 +85,6 @@ class Spaceship(ship_blueprint.Ship):
         self.ship_paused = False
         if self.has_shield:
             self.duration_paused = time.time() - self.time_begin_paused
+
+    def change_bullet_color(self, color: tuple):
+        self.spaceship_bullet_color = color

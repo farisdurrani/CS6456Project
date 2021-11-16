@@ -1,6 +1,6 @@
 import random
 import pygame
-import MouseInstance
+from Utilities import EyeGazeInstance
 
 from ConstantVars import Constants, Colors
 
@@ -31,7 +31,7 @@ class Ship:
 
         # loading variables for health bar
 
-    def update_ship(self, screen, mouse_instance: MouseInstance, main):
+    def update_ship(self, screen, mouse_instance: EyeGazeInstance, main):
         raise NotImplementedError
 
     def update_edges(self, top_left: list):
@@ -55,9 +55,11 @@ class Ship:
                                               current_bar_len,
                                               Constants.HEALTH_BAR_HEIGHT))
 
-    def fire_bullets(self, screen, damage: int, x_velocity, y_velocity, main):
+    def fire_bullets(self, screen, damage: int, x_velocity, y_velocity, main,
+                     bullet_color: tuple = Colors.RED):
         ship_center = self.get_center()
-        new_bullet = ShipBullet(ship_center, damage, x_velocity, y_velocity)
+        new_bullet = ShipBullet(ship_center, damage, x_velocity, y_velocity,
+                                bullet_color)
         self.bullets.append(new_bullet)
 
         bullets_to_remove = set()

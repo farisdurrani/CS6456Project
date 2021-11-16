@@ -7,3 +7,15 @@ DARK_GRAY = (169, 169, 169)
 SILVER = (192, 192, 192)
 LIGHT_GRAY = (211, 211, 211)
 INDIGO = (75, 0, 130)
+
+inverse_color_dict = {
+    BLACK: "BLACK",
+    WHITE: "WHITE",
+    RED: "RED",
+    GREEN: "GREEN",
+    BLUE: "BLUE",
+    DARK_GRAY: "DARK GRAY",
+    SILVER: "SILVER",
+    LIGHT_GRAY: "LIGHT GRAY",
+    INDIGO: "INDIGO"
+}

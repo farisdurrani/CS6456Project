@@ -2,7 +2,7 @@ import math
 from ConstantVars import Constants, GenFunctions
 
 
-class MouseInstance:
+class EyeGazeInstance:
     def __init__(self, scaled_pupil_right_coords: list):
         # self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
         self.mouse_x, self.mouse_y = scaled_pupil_right_coords
@@ -37,3 +37,4 @@ class MouseInstance:
             self.unit_x_displacement = -self.unit_x_displacement
         elif self.quadrant == 4:
             self.angle_from_center = 270 - math.degrees(self.base_mouse_angle)
+

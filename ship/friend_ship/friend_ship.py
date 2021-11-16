@@ -1,6 +1,6 @@
 from ship import ship_blueprint
 from ConstantVars import GenFunctions, Constants, Colors
-import MouseInstance
+from Utilities import EyeGazeInstance
 import random
 import pygame
 import time
@@ -22,7 +22,7 @@ class FriendShip(ship_blueprint.Ship):
         self.time_begin_paused = 0  # in seconds
         self.duration_paused = 0
 
-    def update_ship(self, screen, mouse_instance: MouseInstance, main):
+    def update_ship(self, screen, mouse_instance: EyeGazeInstance, main):
         health_bar_pos = [
             int((self.edges["top_left"][0] + self.edges["bottom_right"][0])
                 / 2),
@@ -65,7 +65,7 @@ class FriendShip(ship_blueprint.Ship):
         #         > self.TIME_LIMIT:
         #     self.out_of_range = False
 
-    def update_coords(self, mouse_instance: MouseInstance):
+    def update_coords(self, mouse_instance: EyeGazeInstance):
         self.edges["top_left"][0] = self.edges["top_left"][0] \
                                     - mouse_instance.unit_x_displacement \
                                     * self.SPEED

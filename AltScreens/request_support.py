@@ -112,6 +112,8 @@ class RequestSupport:
         self.draw_background(screen)
 
         for button in self.buttons:
+            # if click on Apply button, return all friends requested and
+            # close window
             button.update_button(screen, event)
             if button.btn_type == "APPLY" and button.is_enabled():
                 return self.friends_requested
