@@ -1,11 +1,15 @@
 WINDOW_WIDTH = 1244
 WINDOW_HEIGHT = 700
-CENTER = [WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2]  # [622, 350]
+CENTER = [WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2]  # [622, 350]
 FPS = 10
 HEALTH_BAR_LEN = 20
 HEALTH_BAR_HEIGHT = 2
-FONTS = dict()
+FONTS = {}
 BULLET_DAMAGE = 5
+POSSIBLE_PLANETS = \
+    ["Banronope", "Tenkanides", "Todruna", "Kegnerth", "Marus", "Iunus",
+    "Phimoter", "Mithuhiri", "Gars 9R1K", "Soth LPO"]
+CHANGE_PLANET_THRESHOLD = 0.3
 
 
 def initiate_constants(pygame):

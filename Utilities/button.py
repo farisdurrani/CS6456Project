@@ -51,6 +51,7 @@ class Button:
                 self.hover_button()
             else:
                 self.dishover_button()
+
         # if click on button, change color and status
         if event is not None \
                 and event.type == pygame.MOUSEBUTTONUP \
@@ -70,7 +71,10 @@ class Button:
 
     def click_button(self):
         if self.onClick is not None:
-            self.onClick(self.kwargs["item"])
+            if len(self.kwargs) == 0:
+                self.onClick()
+            else:
+                self.onClick(self.kwargs)
         if self.binary_status_enabled:
             if self.enabled:
                 self.disable_button()

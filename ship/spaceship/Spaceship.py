@@ -22,13 +22,18 @@ class Spaceship(ship_blueprint.Ship):
 
         self.BULLET_SPEED = 10
         self.SHIELD_THICKNESS = 10
-        self.SHIELD_LIFE = 4  # in seconds
+        self.SHIELD_LIFE = 6  # in seconds
+        self.BASE_BULLET_DAMAGE = 5
 
+        self.bullet_damage = self.BASE_BULLET_DAMAGE
         self.shield_start_time = 0
         self.time_begin_paused = 0
         self.duration_paused = 0
         self.rotated_image = None
         self.spaceship_bullet_color = Colors.RED
+
+        self.current_inventory = {"Bullet Power": 1}
+        self.wallet = 0
 
         self.SHIELD_RADIUS = math.sqrt(
             (Constants.CENTER[0] - self.edges["top_left"][0]) ** 2 +
@@ -47,8 +52,8 @@ class Spaceship(ship_blueprint.Ship):
                                self.SHIELD_RADIUS)
             pygame.draw.circle(screen, Colors.BLACK, tuple(Constants.CENTER),
                                self.SHIELD_RADIUS - self.SHIELD_THICKNESS)
-            if time.time() - self.shield_start_time - self.duration_paused \
-                    > self.SHIELD_LIFE:
+            if time.time() - self.shield_start_time \
+                    - self.duration_paused > self.SHIELD_LIFE:
                 self.remove_shield()
         self.update_health_bar(screen, self.health_bar_pos)
         self.update_spaceship_rotation(mouse_instance)
@@ -58,7 +63,8 @@ class Spaceship(ship_blueprint.Ship):
                             * mouse_instance.unit_x_displacement
         bullet_y_velocity = self.BULLET_SPEED \
                             * mouse_instance.unit_y_displacement
-        self.fire_bullets(screen, 5, bullet_x_velocity, bullet_y_velocity, main,
+        self.fire_bullets(screen, self.bullet_damage,
+                          bullet_x_velocity, bullet_y_velocity, main,
                           self.spaceship_bullet_color)
 
     def update_spaceship_rotation(self, mouse_instance):
@@ -67,9 +73,15 @@ class Spaceship(ship_blueprint.Ship):
             self.rotated_image = pygame.transform.rotate(self.scaled_ship_image,
                                                          self.angle_from_center)
 
+    def set_bullet_damage(self, new_damage: int):
+        self.bullet_damage = new_damage
+
     def add_shield(self):
-        self.has_shield = True
-        self.shield_start_time = time.time()
+        shields_left = self.current_inventory.get("shield", 0)
+        if shields_left > 0:
+            self.current_inventory["shield"] = shields_left - 1
+            self.has_shield = True
+            self.shield_start_time = time.time()
 
     def remove_shield(self):
         self.has_shield = False
@@ -88,3 +100,16 @@ class Spaceship(ship_blueprint.Ship):
 
     def change_bullet_color(self, color: tuple):
         self.spaceship_bullet_color = color
+
+    def update_inventory(self, order_cart: dict):
+        for item, item_count in order_cart.items():
+            self.current_inventory[item] = self.current_inventory.get(item, 0) \
+                                           + item_count
+            if item == "Bullet Power":
+                if item_count <= 1:
+                    self.set_bullet_damage(self.BASE_BULLET_DAMAGE)
+                else:
+                    self.set_bullet_damage(item_count * self.BASE_BULLET_DAMAGE)
+
+    def update_wallet(self, change_in_cash: int):
+        self.wallet += change_in_cash

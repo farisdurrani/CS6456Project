@@ -8,6 +8,7 @@ from Utilities import EyeGazeInstance
 from Utilities.nine_sq_recognizer import NineSquareRecognizer
 from AltScreens.request_support import RequestSupport
 from AltScreens.settings import Settings
+from AltScreens.market import Market
 import cv2
 from Utilities.gaze_tracking import GazeTracking
 
@@ -26,8 +27,12 @@ class Main:
         self.MINIMUM_SHIPS = 5
 
         self.game_is_paused = False
+        self.current_planet = random.choice(Constants.POSSIBLE_PLANETS)
+
+        # alt screens
         self.req_support = None
         self.settings_panel = None
+        self.market = None
 
         self.webcam = None
         self.gaze = None
@@ -156,7 +161,9 @@ class Main:
                         print(1111)
             elif event.type == pygame.FINGERUP:
                 if not self.game_is_paused:
-                    if len(self.finger_id) == 1:
+                    print(len(self.finger_x_array))
+                    if len(self.finger_id) == 1 \
+                            and len(self.finger_x_array) > 1:
                         drawing_candidate = \
                             NineSquareRecognizer(self.finger_x_array,
                                                  self.finger_y_array) \
@@ -166,6 +173,8 @@ class Main:
                             self.request_support()
                         elif drawing_candidate == "<":
                             self.open_settings()
+                        elif drawing_candidate == "^":
+                            self.open_market()
                         elif drawing_candidate == "O":
                             self.spaceship.add_shield()
                     self.finger_x_array.clear()
@@ -185,11 +194,24 @@ class Main:
                     self.settings_panel = None
                     self.change_spaceship_bullet_color(new_bullet_color)
                     self.resume_game()
+                elif self.market is not None:
+                    self.market = None
+                    self.resume_game()
 
         screen.fill(Colors.BLACK)
         self.update_ships_and_bullets(screen)
         self.update_alt_screens(screen, None)
+        if random.random() < Constants.CHANGE_PLANET_THRESHOLD:
+            self.randomly_change_planet()
+
         self.clock.tick(Constants.FPS)
+
+    def randomly_change_planet(self):
+        self.current_planet = random.choice(Constants.POSSIBLE_PLANETS)
+
+    def open_market(self):
+        self.pause_game()
+        self.market = Market(self.spaceship, self.current_planet)
 
     def change_spaceship_bullet_color(self, color):
         self.spaceship.change_bullet_color(color)
@@ -202,6 +224,8 @@ class Main:
             elif self.settings_panel is not None:
                 new_bullet_color = self.settings_panel.update_gui(screen, event)
                 return new_bullet_color
+            elif self.market is not None:
+                return self.market.update_gui(screen, event)
         return None
 
     def pause_game(self):
