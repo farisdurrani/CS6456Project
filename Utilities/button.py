@@ -4,17 +4,20 @@ import pygame
 
 class Button:
     def __init__(self, message: str, font: pygame.font, dimension: list,
-                 top_left: list, btn_type: str = "Generic"):
+                 top_left: list, btn_type: str = "Generic", onClick=None,
+                 **kwargs):
         self.message = message
         self.font = font
         self.width = dimension[0]
         self.height = dimension[1]
         self.btn_type = btn_type
+        self.kwargs = kwargs
 
         self.top_left = top_left
         self.bg_color_options = {
             "current": Colors.LIGHT_GRAY,
             "disabled": Colors.LIGHT_GRAY,
+            "constant": Colors.DARK_GRAY,
             "enabled": Colors.SILVER,
             "hovered": Colors.WHITE
         }
@@ -26,7 +29,17 @@ class Button:
         }
         self.text_color = self.text_color_options["disabled"]
         self.enabled = False
+
+        self.onClick = onClick
+
         self.hover_enabled = True
+        self.binary_status_enabled = True
+        if btn_type == "Constant":
+            self.update_bg_color(self.bg_color_options["constant"])
+            self.binary_status_enabled = False
+            self.hover_enabled = False
+        elif btn_type == "Non-binary-status":
+            self.binary_status_enabled = False
 
     def update_button(self, screen, event: pygame.event = None):
         # draw button box
@@ -56,15 +69,19 @@ class Button:
         screen.blit(label, tuple(label_pos))
 
     def click_button(self):
-        if self.enabled:
-            self.disable_button()
-        else:
-            self.enable_button()
+        if self.onClick is not None:
+            self.onClick(self.kwargs["item"])
+        if self.binary_status_enabled:
+            if self.enabled:
+                self.disable_button()
+            else:
+                self.enable_button()
 
     def hover_button(self):
         self.bg_color = self.bg_color_options["hovered"]
 
     def dishover_button(self):
+        # unhover or dis-hover over button
         self.bg_color = self.bg_color_options["current"]
 
     def enable_button(self):
