@@ -3,7 +3,7 @@ import random
 from ship.spaceship import Spaceship
 from ship.evil_ship import EvilShip
 from ship.friend_ship import friend_ship
-from ConstantVars import Colors, Constants
+from ConstantVars import Colors, Constants, GenFunctions
 from Utilities import EyeGazeInstance
 from Utilities.nine_sq_recognizer import NineSquareRecognizer
 from AltScreens.request_support import RequestSupport
@@ -69,7 +69,7 @@ class Main:
         while self.run:
             pygame.time.delay(100)
 
-            self.collect_eye_data()
+            # self.collect_eye_data()
             self.update_components(screen)
 
             pygame.display.update()
@@ -155,13 +155,14 @@ class Main:
             elif event.type == pygame.FINGERMOTION:
                 if not self.game_is_paused:
                     if len(self.finger_id) == 1:
-                        self.finger_x_array.append(event.x)
-                        self.finger_y_array.append(event.y)
+                        self.finger_x_array.append(event.x
+                                                   * Constants.WINDOW_WIDTH)
+                        self.finger_y_array.append(event.y
+                                                   * Constants.WINDOW_HEIGHT)
                     if len(self.finger_id) == 4:
                         print(1111)
             elif event.type == pygame.FINGERUP:
                 if not self.game_is_paused:
-                    print(len(self.finger_x_array))
                     if len(self.finger_id) == 1 \
                             and len(self.finger_x_array) > 1:
                         drawing_candidate = \
@@ -199,6 +200,8 @@ class Main:
                     self.resume_game()
 
         screen.fill(Colors.BLACK)
+        self.update_finger_trace(screen)
+        self.update_stars(screen)
         self.update_ships_and_bullets(screen)
         self.update_alt_screens(screen, None)
         if random.random() < Constants.CHANGE_PLANET_THRESHOLD:
@@ -244,6 +247,18 @@ class Main:
         for friend in friends_requested:
             self.all_ships.append(friend_ship.FriendShip(friend))
 
+    def update_finger_trace(self, screen):
+        for x, y in zip(self.finger_x_array, self.finger_y_array):
+            GenFunctions.draw_circle_alpha(screen,
+                                           tuple(Colors.HALF_TRANSPARENT_WHITE),
+                                           (x, y),
+                                           5)
+
+    def update_stars(self, screen):
+        NUMBER_OF_STARS = 10
+        for _ in range(NUMBER_OF_STARS):
+            GenFunctions.draw_point(screen, GenFunctions.rand_coord())
+
     def request_support(self):
         self.pause_game()
         self.req_support = RequestSupport()
@@ -266,7 +281,7 @@ class Main:
             try:
                 self.all_ships.pop(ship_to_remove)
             except IndexError:
-                print(ship_to_remove)
+                print(f"Unable to remove ship #{ship_to_remove}")
         ships_to_remove.clear()
 
         if len(self.all_ships) < self.MINIMUM_SHIPS:

@@ -77,9 +77,10 @@ class Spaceship(ship_blueprint.Ship):
         self.bullet_damage = new_damage
 
     def add_shield(self):
-        shields_left = self.current_inventory.get("shield", 0)
+        shields_left = self.current_inventory.get("Shield", 0)
+        print(shields_left)
         if shields_left > 0:
-            self.current_inventory["shield"] = shields_left - 1
+            self.current_inventory["Shield"] = shields_left - 1
             self.has_shield = True
             self.shield_start_time = time.time()
 
@@ -102,6 +103,7 @@ class Spaceship(ship_blueprint.Ship):
         self.spaceship_bullet_color = color
 
     def update_inventory(self, order_cart: dict):
+        print(order_cart)
         for item, item_count in order_cart.items():
             self.current_inventory[item] = self.current_inventory.get(item, 0) \
                                            + item_count
@@ -110,6 +112,7 @@ class Spaceship(ship_blueprint.Ship):
                     self.set_bullet_damage(self.BASE_BULLET_DAMAGE)
                 else:
                     self.set_bullet_damage(item_count * self.BASE_BULLET_DAMAGE)
+        print(f"new inventory: {self.current_inventory}")
 
     def update_wallet(self, change_in_cash: int):
         self.wallet += change_in_cash

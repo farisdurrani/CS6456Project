@@ -85,14 +85,16 @@ class Ship:
         bullets_to_remove.clear()
 
     def analyze_hit(self, bullet_coord: list, damage: int) -> bool:
-        if self.has_shield or not self.is_alive():
-            return False
+
         if self.edges["top_left"][0] <= bullet_coord[0] <= \
                 self.edges["bottom_right"][0] \
                 and self.edges["top_left"][1] <= bullet_coord[1] <= \
                 self.edges["bottom_right"][1]:
-            self.health -= damage
-            return True
+            if self.has_shield or not self.is_alive():
+                return True
+            else:
+                self.health -= damage
+                return True
         return False
 
     def is_alive(self) -> bool:

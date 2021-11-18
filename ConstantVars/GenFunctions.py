@@ -58,4 +58,20 @@ def get_quadrant(x_pos: int, y_pos: int,
 
 
 def draw_point(screen, coords: list):
-    pygame.draw.rect(screen, Colors.GREEN, (coords[0], coords[1], 3, 3))
+    pygame.draw.rect(screen, Colors.WHITE, (coords[0], coords[1], 3, 3))
+
+
+def draw_circle_alpha(surface, color, center: tuple, radius):
+    """
+    Draws a semi-transparent circle.
+    Citation: https://stackoverflow.com/a/64630102/11031425
+    :param surface: surface to draw circle on
+    :param color: color in RGBA e.g. (255, 255, 0, 127)
+    :param center: center coord of circle
+    :param radius: radius of circle
+    :return: None
+    """
+    target_rect = pygame.Rect(center, (0, 0)).inflate((radius * 2, radius * 2))
+    shape_surf = pygame.Surface(target_rect.size, pygame.SRCALPHA)
+    pygame.draw.circle(shape_surf, color, (radius, radius), radius)
+    surface.blit(shape_surf, target_rect)
