@@ -14,11 +14,10 @@ def rand_coord() -> list:
     return [x, y]
 
 
-def rand_coord_padded() -> list:
+def rand_coord_padded(CENTER_PADDING: int = 40) -> list:
     """
     :return: a random coordinate not located near center of screen
     """
-    CENTER_PADDING = 40
     if random.random() >= 0.5:
         x = random.randint(Constants.CENTER[0] + CENTER_PADDING,
                            Constants.WINDOW_WIDTH)

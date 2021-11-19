@@ -7,7 +7,7 @@ from ConstantVars import Constants, Colors
 
 class Ship:
     def __init__(self, max_health: int, top_left: list, height: int, icon: str):
-        # ship characteristics
+        # main_objects characteristics
         self.id = random.randint(0, 10_000)
         self.angle_from_center = 0  # counterclockwise, in deg
         self.MAX_HEALTH = max_health
@@ -18,7 +18,7 @@ class Ship:
         self.ship_paused = False
         self.BULLET_SPEED = 10
 
-        # loading ship image
+        # loading main_objects image
         raw_spaceship_image = pygame.image.load(icon)
         SPACESHIP_HEIGHT = height
         self.scaled_ship_image = pygame.transform.scale(raw_spaceship_image,
@@ -42,6 +42,10 @@ class Ship:
             "top_left": top_left,
             "bottom_right": bottom_right
         }
+
+    def get_rect(self):
+        return pygame.Rect(tuple(self.edges["top_left"]),
+                           (self.ship_image_width, self.ship_image_height))
 
     def update_health_bar(self, screen, health_bar_pos: list):
         pygame.draw.rect(screen, Colors.WHITE, (health_bar_pos[0],
@@ -85,7 +89,6 @@ class Ship:
         bullets_to_remove.clear()
 
     def analyze_hit(self, bullet_coord: list, damage: int) -> bool:
-
         if self.edges["top_left"][0] <= bullet_coord[0] <= \
                 self.edges["bottom_right"][0] \
                 and self.edges["top_left"][1] <= bullet_coord[1] <= \
@@ -93,9 +96,14 @@ class Ship:
             if self.has_shield or not self.is_alive():
                 return True
             else:
-                self.health -= damage
+                self.reduce_health(damage)
                 return True
         return False
+
+    def reduce_health(self, damage: int):
+        self.health -= damage
+        if self.health < 0:
+            self.health = 0
 
     def is_alive(self) -> bool:
         return self.health > 0

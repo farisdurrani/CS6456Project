@@ -2,7 +2,7 @@ import random
 from ConstantVars import Constants, Colors
 import pygame
 from Utilities.button import Button
-from ship.spaceship import Spaceship
+from main_objects.spaceship import Spaceship
 
 
 class Market:
@@ -144,7 +144,7 @@ class Market:
         self.update_headers(screen, [0, 0])
         self.update_market(screen, self.planet_goods, event)
 
-        # update ship market items
+        # update main_objects market items
         self.update_headers(
             screen,
             [self.sizes["SHIP_MARKET_X_POS"] - self.sizes["GENERAL_MARGIN"], 0]

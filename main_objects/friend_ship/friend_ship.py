@@ -1,4 +1,4 @@
-from ship import ship_blueprint
+from main_objects import ship_blueprint
 from ConstantVars import GenFunctions, Constants, Colors
 from Utilities import EyeGazeInstance
 import random
@@ -11,7 +11,7 @@ class FriendShip(ship_blueprint.Ship):
         FRIEND_MAX_HEALTH = 100
         TOP_LEFT_INITIAL = GenFunctions.rand_coord()
         FRIEND_HEIGHT = 50
-        FRIEND_SHIP_ICON = r'ship\\friend_ship\\friend_ship_icon.png'
+        FRIEND_SHIP_ICON = r'main_objects\\friend_ship\\friend_ship_icon.png'
 
         super().__init__(FRIEND_MAX_HEALTH, TOP_LEFT_INITIAL, FRIEND_HEIGHT,
                          FRIEND_SHIP_ICON)
@@ -40,7 +40,7 @@ class FriendShip(ship_blueprint.Ship):
         self.fire_bullets(screen, Constants.BULLET_DAMAGE, bullet_velocity[0],
                           bullet_velocity[1], main)
 
-        # rotate and move ship
+        # rotate and move main_objects
         if not self.ship_paused:
             self.angle_from_center = random.randint(0, 359)
             self.update_coords(mouse_instance)
@@ -59,7 +59,7 @@ class FriendShip(ship_blueprint.Ship):
         ]
         screen.blit(name_label, tuple(name_pos))
 
-        # kill the ship after a period of time
+        # kill the main_objects after a period of time
         # if not self.ship_paused \
         #         and time.time() - self.time_initiated - self.duration_paused \
         #         > self.TIME_LIMIT:

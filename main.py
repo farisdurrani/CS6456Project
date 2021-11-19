@@ -1,8 +1,9 @@
 import pygame
 import random
-from ship.spaceship import Spaceship
-from ship.evil_ship import EvilShip
-from ship.friend_ship import friend_ship
+from main_objects.spaceship import Spaceship
+from main_objects.evil_ship import EvilShip
+from main_objects.friend_ship import friend_ship
+from main_objects.asteroid.asteroid import Asteroid
 from ConstantVars import Colors, Constants, GenFunctions
 from Utilities import EyeGazeInstance
 from Utilities.nine_sq_recognizer import NineSquareRecognizer
@@ -20,9 +21,9 @@ class Main:
 
         self.spaceship = None
         self.all_ships = []
-        self.bullets = []
         self.finger_x_array = []
         self.finger_y_array = []
+        self.asteroids = []
         self.finger_id = set()
         self.MINIMUM_SHIPS = 5
 
@@ -178,6 +179,18 @@ class Main:
                             self.open_market()
                         elif drawing_candidate == "O":
                             self.spaceship.add_shield()
+                        elif drawing_candidate == "/":
+                            asteroid_to_remove = None
+                            for asteroid in self.asteroids:
+                                if asteroid.analyze_strike(self.finger_x_array,
+                                                           self.finger_y_array):
+                                    asteroid_to_remove = asteroid
+                                    break
+                            if asteroid_to_remove is not None:
+                                try:
+                                    self.asteroids.remove(asteroid_to_remove)
+                                except ValueError:
+                                    pass
                     self.finger_x_array.clear()
                     self.finger_y_array.clear()
                     self.finger_id.clear()
@@ -202,12 +215,30 @@ class Main:
         screen.fill(Colors.BLACK)
         self.update_finger_trace(screen)
         self.update_stars(screen)
+        self.update_asteroids(screen)
         self.update_ships_and_bullets(screen)
         self.update_alt_screens(screen, None)
         if random.random() < Constants.CHANGE_PLANET_THRESHOLD:
             self.randomly_change_planet()
+        # if random.random() < Constants.ASTEROID_PROBABILITY:
+        if len(self.asteroids) == 0:
+            self.asteroids.append(Asteroid())
 
         self.clock.tick(Constants.FPS)
+
+    def update_asteroids(self, screen):
+        asteroids_to_remove = []
+        for asteroid in self.asteroids:
+            asteroid.update_asteroid(screen)
+
+            if asteroid.analyze_hit(self.spaceship):
+                # if got hit, remove the spaceship
+                asteroids_to_remove.append(asteroid)
+        for asteroid_to_remove in asteroids_to_remove:
+            try:
+                self.asteroids.remove(asteroid_to_remove)
+            except ValueError:
+                pass
 
     def randomly_change_planet(self):
         self.current_planet = random.choice(Constants.POSSIBLE_PLANETS)

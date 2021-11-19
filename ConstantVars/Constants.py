@@ -8,8 +8,9 @@ FONTS = {}
 BULLET_DAMAGE = 5
 POSSIBLE_PLANETS = \
     ["Banronope", "Tenkanides", "Todruna", "Kegnerth", "Marus", "Iunus",
-    "Phimoter", "Mithuhiri", "Gars 9R1K", "Soth LPO"]
+     "Phimoter", "Mithuhiri", "Gars 9R1K", "Soth LPO"]
 CHANGE_PLANET_THRESHOLD = 0.3
+ASTEROID_PROBABILITY = 0.3
 
 
 def initiate_constants(pygame):
