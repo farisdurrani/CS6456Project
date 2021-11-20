@@ -1,12 +1,12 @@
 import random
 import pygame
 from Utilities import EyeGazeInstance
-
-from ConstantVars import Constants, Colors
+from ConstantVars import Constants, Colors, GenFunctions
 
 
 class Ship:
-    def __init__(self, max_health: int, top_left: list, height: int, icon: str):
+    def __init__(self, max_health: int, top_left: list, height: int, icon: str,
+                 first_view_icon: str):
         # main_objects characteristics
         self.id = random.randint(0, 10_000)
         self.angle_from_center = 0  # counterclockwise, in deg
@@ -17,19 +17,41 @@ class Ship:
         self.out_of_range = False
         self.ship_paused = False
         self.BULLET_SPEED = 10
+        self.is_spaceship = False
 
         # loading main_objects image
-        raw_spaceship_image = pygame.image.load(icon)
-        SPACESHIP_HEIGHT = height
-        self.scaled_ship_image = pygame.transform.scale(raw_spaceship_image,
-                                                        (SPACESHIP_HEIGHT,
-                                                         SPACESHIP_HEIGHT))
+        self.raw_spaceship_image = pygame.image.load(icon)
+        self.ship_height = height
+        self.scaled_ship_image = pygame.transform.scale(
+            self.raw_spaceship_image, (self.ship_height, self.ship_height))
         self.ship_image_width = self.scaled_ship_image.get_width()
         self.ship_image_height = self.scaled_ship_image.get_height()
         self.edges = dict()
         self.update_edges(top_left)
 
-        # loading variables for health bar
+        self.first_view = {
+            "BASE_HEIGHT": 50.0,
+            "HEIGHT_INC": 0.25,
+            "current_height": 50.0,  # range = [50, 356.86]
+            "raw_image": pygame.image.load(first_view_icon),
+            "scaled_image": None,
+            "final_rotated_image": None,
+            "angle_from_mid_btm": 0.0,  # counterclockwise, deg, range=[0, 180]
+            "angle_from_self_center": 0.0,  # counterclockwise, deg, [0, 360)
+            "distance_to_mid_btm": 0.0,
+            "health_bar_pos": [0, 0],
+            "final_screen_pos": [0, 0]
+        }
+        self.first_view["scaled_image"] = pygame.transform.scale(
+            self.first_view["raw_image"],
+            (self.first_view["current_height"],
+             self.first_view["current_height"])
+        )
+
+    def rescale_ship(self, new_height):
+        self.ship_height = new_height
+        self.scaled_ship_image = pygame.transform.scale(
+            self.raw_spaceship_image, (self.ship_height, self.ship_height))
 
     def update_ship(self, screen, mouse_instance: EyeGazeInstance, main):
         raise NotImplementedError
@@ -42,6 +64,9 @@ class Ship:
             "top_left": top_left,
             "bottom_right": bottom_right
         }
+
+    def update_3rd_view_vars(self, angle_of_spaceship):
+        raise NotImplementedError
 
     def get_rect(self):
         return pygame.Rect(tuple(self.edges["top_left"]),
@@ -60,8 +85,14 @@ class Ship:
                                               Constants.HEALTH_BAR_HEIGHT))
 
     def fire_bullets(self, screen, damage: int, x_velocity, y_velocity, main,
-                     bullet_color: tuple = Colors.RED):
-        ship_center = self.get_center()
+                     bullet_color: tuple = Colors.RED, is_spaceship=False):
+        if main.in_first_view:
+            if is_spaceship:
+                ship_center = Constants.MID_BTM
+            else:
+                ship_center = self.first_view["final_screen_pos"]
+        else:
+            ship_center = self.get_center()
         new_bullet = ShipBullet(ship_center, damage, x_velocity, y_velocity,
                                 bullet_color)
         self.bullets.append(new_bullet)
@@ -71,6 +102,9 @@ class Ship:
             bullet.update_screen_pos(screen, self.ship_paused)
             if bullet.out_of_range:
                 bullets_to_remove.add(bullet_i)
+
+        while len(self.bullets) > 100:
+            self.bullets.pop(0)
 
         if not self.ship_paused:
             for other_ship in main.all_ships:
@@ -121,6 +155,9 @@ class Ship:
 
     def resume_ship(self):
         self.ship_paused = False
+
+    def clear_all_bullets(self):
+        self.bullets.clear()
 
 
 class ShipBullet:

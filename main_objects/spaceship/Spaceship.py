@@ -18,7 +18,9 @@ class Spaceship(ship_blueprint.Ship):
             int(Constants.CENTER[1] - SPACESHIP_HEIGHT / 2)
         ]
         super().__init__(SPACESHIP_MAX_HEALTH, TOP_LEFT, SPACESHIP_HEIGHT,
-                         SPACESHIP_ICON)
+                         SPACESHIP_ICON, SPACESHIP_ICON)
+
+        self.is_spaceship = True
 
         self.BULLET_SPEED = 10
         self.SHIELD_THICKNESS = 10
@@ -31,6 +33,8 @@ class Spaceship(ship_blueprint.Ship):
         self.duration_paused = 0
         self.rotated_image = None
         self.spaceship_bullet_color = Colors.RED
+
+        self.last_angle_from_center = self.angle_from_center
 
         self.current_inventory = {"Bullet Power": 1}
         self.wallet = 0
@@ -55,17 +59,48 @@ class Spaceship(ship_blueprint.Ship):
             if time.time() - self.shield_start_time \
                     - self.duration_paused > self.SHIELD_LIFE:
                 self.remove_shield()
-        self.update_health_bar(screen, self.health_bar_pos)
-        self.update_spaceship_rotation(mouse_instance)
-        screen.blit(self.rotated_image, self.edges["top_left"])
 
-        bullet_x_velocity = self.BULLET_SPEED \
-                            * mouse_instance.unit_x_displacement
-        bullet_y_velocity = self.BULLET_SPEED \
-                            * mouse_instance.unit_y_displacement
+        self.update_spaceship_rotation(mouse_instance)
+        if main.in_first_view:
+            health_bar_pos_1st_view = [
+                Constants.CENTER[0] - Constants.HEALTH_BAR_LEN / 2,
+                Constants.CENTER[1] + 300
+            ]
+            self.update_health_bar(screen, health_bar_pos_1st_view)
+        else:
+            self.update_health_bar(screen, self.health_bar_pos)
+            screen.blit(self.rotated_image, self.edges["top_left"])
+
+        bullet_velocity = self.generate_bullet_velocity(mouse_instance,
+                                                        main.in_first_view)
         self.fire_bullets(screen, self.bullet_damage,
-                          bullet_x_velocity, bullet_y_velocity, main,
-                          self.spaceship_bullet_color)
+                          bullet_velocity[0], bullet_velocity[1], main,
+                          self.spaceship_bullet_color,
+                          is_spaceship=self.is_spaceship)
+
+    def generate_bullet_velocity(self, mouse_instance, in_first_view=False) \
+            -> list:
+        if in_first_view:
+            BULLET_X_DEVIATION = 2
+            if self.last_angle_from_center == self.angle_from_center:
+                bullet_velocity = [0, -self.BULLET_SPEED]
+            elif self.last_angle_from_center > self.angle_from_center:
+                # turning left, means bullets go to the right
+                bullet_velocity = [
+                    BULLET_X_DEVIATION, -self.BULLET_SPEED
+                ]
+            else:
+                # turning right, means bullets go to the left
+                bullet_velocity = [
+                    -BULLET_X_DEVIATION, -self.BULLET_SPEED
+                ]
+            self.last_angle_from_center = self.angle_from_center
+        else:
+            bullet_velocity = [
+                self.BULLET_SPEED * mouse_instance.unit_x_displacement,
+                self.BULLET_SPEED * mouse_instance.unit_y_displacement
+            ]
+        return bullet_velocity
 
     def update_spaceship_rotation(self, mouse_instance):
         if not self.ship_paused:

@@ -12,6 +12,7 @@ from AltScreens.settings import Settings
 from AltScreens.market import Market
 import cv2
 from Utilities.gaze_tracking import GazeTracking
+from first_person_view.first_person_view import FirstPersonView
 
 
 class Main:
@@ -26,9 +27,12 @@ class Main:
         self.asteroids = []
         self.finger_id = set()
         self.MINIMUM_SHIPS = 5
+        self.MAXIMUM_SHIPS = 25
 
         self.game_is_paused = False
         self.current_planet = random.choice(Constants.POSSIBLE_PLANETS)
+        self.in_first_view = True
+        self.first_view = None
 
         # alt screens
         self.req_support = None
@@ -41,7 +45,7 @@ class Main:
         self.min_pupil_right_coords = [10000, 10000]
         self.max_pupil_right_coords = [0, 0]
         # when min and max pupil coords are no longer equal
-        self.able_to_scale = False
+        self.eye_coords_able_to_scale = False
 
         screen = self.initiate_game()
         self.run_game(screen)
@@ -49,6 +53,8 @@ class Main:
     def initiate_game(self):
         self.gaze = GazeTracking()
         self.webcam = cv2.VideoCapture(0)
+
+        self.first_view = FirstPersonView()
 
         pygame.init()
         Constants.initiate_constants(pygame)
@@ -70,7 +76,7 @@ class Main:
         while self.run:
             pygame.time.delay(100)
 
-            # self.collect_eye_data()
+            self.collect_eye_data()
             self.update_components(screen)
 
             pygame.display.update()
@@ -103,12 +109,12 @@ class Main:
                 max(self.max_pupil_right_coords[0], coord[0]),
                 max(self.max_pupil_right_coords[1], coord[1])
             ]
-            if not self.able_to_scale:
+            if not self.eye_coords_able_to_scale:
                 if self.min_pupil_right_coords[0] \
                         != self.max_pupil_right_coords[0] \
                         and self.min_pupil_right_coords[1] \
                         != self.max_pupil_right_coords[1]:
-                    self.able_to_scale = True
+                    self.eye_coords_able_to_scale = True
             else:
                 x_scaled = (coord[0] - self.min_pupil_right_coords[0]) / \
                            (self.max_pupil_right_coords[0]
@@ -155,13 +161,10 @@ class Main:
                     self.finger_id.add(event.finger_id)
             elif event.type == pygame.FINGERMOTION:
                 if not self.game_is_paused:
-                    if len(self.finger_id) == 1:
-                        self.finger_x_array.append(event.x
-                                                   * Constants.WINDOW_WIDTH)
-                        self.finger_y_array.append(event.y
-                                                   * Constants.WINDOW_HEIGHT)
-                    if len(self.finger_id) == 4:
-                        print(1111)
+                    self.finger_x_array.append(event.x
+                                               * Constants.WINDOW_WIDTH)
+                    self.finger_y_array.append(event.y
+                                               * Constants.WINDOW_HEIGHT)
             elif event.type == pygame.FINGERUP:
                 if not self.game_is_paused:
                     if len(self.finger_id) == 1 \
@@ -191,6 +194,9 @@ class Main:
                                     self.asteroids.remove(asteroid_to_remove)
                                 except ValueError:
                                     pass
+                    elif len(self.finger_id) == 4 \
+                            and len(self.finger_x_array) > 1:
+                        self.in_first_view = not self.in_first_view
                     self.finger_x_array.clear()
                     self.finger_y_array.clear()
                     self.finger_id.clear()
@@ -213,6 +219,9 @@ class Main:
                     self.resume_game()
 
         screen.fill(Colors.BLACK)
+        if self.in_first_view:
+            self.first_view.update_view(screen,
+                                        self.spaceship.angle_from_center)
         self.update_finger_trace(screen)
         self.update_stars(screen)
         self.update_asteroids(screen)
@@ -220,8 +229,7 @@ class Main:
         self.update_alt_screens(screen, None)
         if random.random() < Constants.CHANGE_PLANET_THRESHOLD:
             self.randomly_change_planet()
-        # if random.random() < Constants.ASTEROID_PROBABILITY:
-        if len(self.asteroids) == 0:
+        if len(self.asteroids) == 0 and not self.in_first_view:
             self.asteroids.append(Asteroid())
 
         self.clock.tick(Constants.FPS)
@@ -317,6 +325,14 @@ class Main:
 
         if len(self.all_ships) < self.MINIMUM_SHIPS:
             self.all_ships.append(EvilShip.EvilShip())
+
+        while len(self.all_ships) > self.MAXIMUM_SHIPS:
+            # if too many ships, remove a random ship that is not the main
+            # spaceship
+            if self.all_ships[0].is_spaceship:
+                self.all_ships.pop(1)
+            else:
+                self.all_ships.pop(0)
 
     def exit_game(self):
         print("EXITING...")

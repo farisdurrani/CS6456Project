@@ -1,3 +1,5 @@
+import math
+
 WINDOW_WIDTH = 1244
 WINDOW_HEIGHT = 700
 CENTER = [WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2]  # [622, 350]
@@ -11,6 +13,9 @@ POSSIBLE_PLANETS = \
      "Phimoter", "Mithuhiri", "Gars 9R1K", "Soth LPO"]
 CHANGE_PLANET_THRESHOLD = 0.3
 ASTEROID_PROBABILITY = 0.3
+MAX_CENTER_EDGE_DISTANCE = \
+    math.sqrt(sum((px - qx) ** 2.0 for px, qx in zip([0, 0], CENTER)))
+MID_BTM = [WINDOW_WIDTH / 2, WINDOW_HEIGHT]
 
 
 def initiate_constants(pygame):

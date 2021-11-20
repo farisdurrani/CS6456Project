@@ -1,6 +1,6 @@
 import pygame.draw
 from ConstantVars import Constants, Colors
-import random
+import random, math
 
 
 def out_of_range(x: int, y: int) -> bool:
@@ -74,3 +74,23 @@ def draw_circle_alpha(surface, color, center: tuple, radius):
     shape_surf = pygame.Surface(target_rect.size, pygame.SRCALPHA)
     pygame.draw.circle(shape_surf, color, (radius, radius), radius)
     surface.blit(shape_surf, target_rect)
+
+
+def dist(p: list, q: list) -> float:
+    """
+    Returns the Euclidean distance between points p and q. Tries to emulate
+    Python 3.8's math.dist(p, q) function.
+    Citation: https://docs.python.org/3/library/math.html
+    :param p: A multi-dimensional (dimension >= 1) point in the form of a list
+    :param q: A multi-dimensional (dimension >= 1) point in the form of a list
+    :return: Euclidean distance between points p and q
+    """
+    return math.sqrt(sum((px - qx) ** 2.0 for px, qx in zip(p, q)))
+
+
+def abs_sin(deg: float) -> float:
+    return math.fabs(math.sin(math.radians(deg)))
+
+
+def abs_cos(deg: float) -> float:
+    return math.fabs(math.cos(math.radians(deg)))
