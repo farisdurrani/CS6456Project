@@ -11,15 +11,74 @@
 
 A single-player game where you control the spaceship using your eyes, fingers, 
 and mouse.<br>
-Source: https://github.com/farisdurrani/CS6456Project
+
+**Source:** https://github.com/farisdurrani/CS6456Project <br>
+**Authors:** [Faris Durrani](https://github.com/farisdurrani/), 
+[Rishabh Ghora](https://github.com/RishabhGhora)
 
 ## How to run
 1. Install the dependencies in `requirements.txt`. Runs on Python 3.6.8.
-2. Run the `spaceship_battle.py` file
+2. Run the `spaceship_battle.py` file.
 
 ## How to play
+### Basics
+![](readme_assets/play_general.gif)
+Use your eyes to move the ship around. The program tracks the coordinates of 
+your right eye and translates those coordinates to positions on the game screen,
+where the spaceship (center, in white) will be pointed at.
 
+Evil ships (in red) will continuously attack you until they are out of range 
+or until they die.
 
+### One Finger Controls
+This game also allows finger gestures (some systems detect a mouse pointer to 
+be equivalent to a single finger gesture).
+#### Left (<)
+![](readme_assets/left.gif)
+Using a finger, a user can draw a "<" symbol anywhere on the screen to pull up 
+the settings. You can change the color of the spaceship's bullet by clicking on 
+the button (using your mouse or your finger). The program recognizes the shape 
+by employing a 9-square recognizer.
+
+#### Right (>)
+![](readme_assets/right.gif)
+Using a finger, a user can draw a "<" symbol anywhere on the screen to pull up 
+friends to request support from. These friends are blue with the same health 
+as evil ships. Their behavior is random.
+
+#### Up (^)
+![](readme_assets/up.gif)
+Using a finger, a user can draw a "^" symbol anywhere on the screen to pull up 
+the market. The market is filled with random items with random prices 
+(within appropriate ranges). Hence, the user can benefit from trading by buying
+when prices are low and selling when high. Additionally, the market provides
+shield and bullet power to upgrade the ship. Shields are temporary as 
+described below.
+
+#### Shield (O)
+![](readme_assets/shield.gif)
+Using a finger, a user can draw an "O" symbol anywhere on the screen to make a 
+temporary shield around the spaceship (assuming at least one shield has been 
+bought). While the shield is up, no damage will be sustained.
+
+#### Strike (/)
+![](readme_assets/strike.gif)
+Using a finger, a user can draw an "/" symbol over an asteroid to destroy it 
+before it hits the ship
+
+### Four finger control
+#### Slide to first view (or vice versa)
+![](readme_assets/view.gif)
+Using four fingers, a user can slide their fingers over the screen to change 
+the view from third-person view to first-person view, and vice versa. The 
+spaceship's bullets will deviate slightly to the left or to the right to 
+show the ship's rotation. 
+
+The first-person view depends on the third-person 
+view, i.e., the eye's coordinates determines where the ship points to in 
+first-person view and this is translated to third-person view to see if the
+ship is turning right or left. The first-person view only sees the 180 
+degrees view in front of the ship.
 
 ## Creative Commons
 <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.

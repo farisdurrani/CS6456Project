@@ -27,6 +27,9 @@ class EvilShip(ship_blueprint.Ship):
             self.update_coords(mouse_instance)
             self.update_rotation()
 
+        if not self.is_alive():
+            self.out_of_range = True
+
         bullet_velocity = self.generate_bullet_velocity(main.in_first_view)
         self.fire_bullets(screen, Constants.BULLET_DAMAGE,
                           bullet_velocity[0],
@@ -48,9 +51,6 @@ class EvilShip(ship_blueprint.Ship):
             ]
             self.update_health_bar(screen, health_bar_pos)
             screen.blit(self.rotated_image, self.edges["top_left"])
-
-
-
 
     def generate_bullet_velocity(self, in_first_view=False) -> list:
         bullet_velocity = [0, 0]

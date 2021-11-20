@@ -20,9 +20,10 @@ class Asteroid:
         self.asteroid_velocity = self.generate_asteroid_velocity()
         self.angle_from_center = 0
 
-    def update_asteroid(self, screen):
+    def update_asteroid(self, screen, game_is_paused=False):
         self.update_rotation()
-        self.update_coords()
+        if not game_is_paused:
+            self.update_coords()
         rotated_asteroid = pygame.transform. \
             rotate(self.scaled_asteroid_image, self.angle_from_center)
         screen.blit(rotated_asteroid, self.top_left)

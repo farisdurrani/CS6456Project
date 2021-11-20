@@ -237,7 +237,7 @@ class SpaceshipBattle:
     def update_asteroids(self, screen):
         asteroids_to_remove = []
         for asteroid in self.asteroids:
-            asteroid.update_asteroid(screen)
+            asteroid.update_asteroid(screen, self.game_is_paused)
 
             if asteroid.analyze_hit(self.spaceship):
                 # if got hit, remove the spaceship
