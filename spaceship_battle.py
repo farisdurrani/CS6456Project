@@ -15,7 +15,7 @@ from Utilities.gaze_tracking import GazeTracking
 from first_person_view.first_person_view import FirstPersonView
 
 
-class Main:
+class SpaceshipBattle:
     def __init__(self):
         self.run = True
         self.clock = pygame.time.Clock()
@@ -31,7 +31,7 @@ class Main:
 
         self.game_is_paused = False
         self.current_planet = random.choice(Constants.POSSIBLE_PLANETS)
-        self.in_first_view = True
+        self.in_first_view = False
         self.first_view = None
 
         # alt screens
@@ -342,7 +342,7 @@ class Main:
 
 
 def main():
-    Main()
+    SpaceshipBattle()
 
 
 if __name__ == "__main__":
