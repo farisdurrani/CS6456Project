@@ -5,10 +5,10 @@ from ConstantVars import Constants, GenFunctions
 class EyeGazeInstance:
     def __init__(self, scaled_pupil_right_coords: list):
         # self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
-        self.mouse_x, self.mouse_y = scaled_pupil_right_coords
-        x_delta = self.mouse_x - Constants.CENTER[0]
-        y_delta = self.mouse_y - Constants.CENTER[1]
-        self.quadrant = GenFunctions.get_quadrant(self.mouse_x, self.mouse_y)
+        self.eye_x, self.eye_y = scaled_pupil_right_coords
+        x_delta = self.eye_x - Constants.CENTER[0]
+        y_delta = self.eye_y - Constants.CENTER[1]
+        self.quadrant = GenFunctions.get_quadrant(self.eye_x, self.eye_y)
 
         self.base_mouse_angle = 0  # in radians, from x-axis
         self.angle_from_center = 0  # counterclockwise, in deg

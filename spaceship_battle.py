@@ -307,11 +307,11 @@ class SpaceshipBattle:
         self.settings_panel = Settings(self.spaceship.spaceship_bullet_color)
 
     def update_ships_and_bullets(self, screen):
-        mouse_instance = EyeGazeInstance.EyeGazeInstance(
+        eye_gaze_instance = EyeGazeInstance.EyeGazeInstance(
             self.scaled_pupil_right_coords)
         ships_to_remove = set()
         for ship_i, ship in enumerate(self.all_ships):
-            ship.update_ship(screen, mouse_instance, self)
+            ship.update_ship(screen, eye_gaze_instance, self)
             if ship.out_of_range:
                 ships_to_remove.add(ship_i)
 

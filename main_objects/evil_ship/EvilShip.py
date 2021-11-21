@@ -22,9 +22,9 @@ class EvilShip(ship_blueprint.Ship):
         self.out_of_range = False
         self.health = SPACESHIP_MAX_HEALTH
 
-    def update_ship(self, screen, mouse_instance: EyeGazeInstance, main):
+    def update_ship(self, screen, eye_gaze_instance: EyeGazeInstance, main):
         if not self.ship_paused:
-            self.update_coords(mouse_instance)
+            self.update_coords(eye_gaze_instance)
             self.update_rotation()
 
         if not self.is_alive():
