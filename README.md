@@ -90,8 +90,8 @@ degrees view in front of the ship.
 
 ## Attribution
 Almost all the code are original with only a small number of borrowed code from
-StackOverflow for less intuitive mathematical or Pygame questions. 
-They are included below.
+StackOverflow or other code-sharing platforms for less intuitive mathematical or
+Pygame operations. They are included below.
 1. [Calculating if ship is within the 180-degree angle of view](https://stackoverflow.com/a/12234633/11031425)
 2. [Translucent Pygame Surfaces](https://stackoverflow.com/a/6350227/11031425)
 3. [Translucent Pygame circle](https://stackoverflow.com/a/64630102/11031425)
