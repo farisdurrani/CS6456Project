@@ -20,6 +20,13 @@ and mouse.<br>
 1. Install the dependencies in `requirements.txt`. Runs on Python 3.6.8.
 2. Run the `spaceship_battle.py` file.
 
+## Main libraries (from `requirements.txt`)
+1. cmake
+2. dlib==19.16.0
+3. numpy==1.16.1
+4. opencv_python==4.5.4.58
+5. pygame==2.1.0
+
 ## How to play
 ### Eye Gaze for Main Control
 ![](readme_assets/play_general.gif)
@@ -80,6 +87,16 @@ view, i.e., the eye's coordinates determines where the ship points to in
 first-person view and this is translated to third-person view to see if the
 ship is turning right or left. The first-person view only sees the 180 
 degrees view in front of the ship.
+
+## Attribution
+Almost all the code are original with only a small number of borrowed code from
+StackOverflow for less intuitive mathematical or Pygame questions. 
+They are included below.
+1. [Calculating if ship is within the 180-degree angle of view](https://stackoverflow.com/a/12234633/11031425)
+2. [Translucent Pygame Surfaces](https://stackoverflow.com/a/6350227/11031425)
+3. [Translucent Pygame circle](https://stackoverflow.com/a/64630102/11031425)
+4. [Calculating Euclidean distance](https://docs.python.org/3/library/math.html)
+5. [Drawing with fingers on Pygame](https://www.patreon.com/posts/finger-painting-43786073?l=fr)
 
 ## Creative Commons
 <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.

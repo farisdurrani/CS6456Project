@@ -16,8 +16,7 @@ class RequestSupport:
         self.draw_apply_button()
 
     def draw_background(self, screen):
-        # citation for translucent: https://stackoverflow.com/questions/
-        # 6339057/draw-a-transparent-rectangles-and-polygons-in-pygame
+        # citation for translucent: https://stackoverflow.com/a/6350227/11031425
         translucent_surface = pygame.Surface((Constants.WINDOW_WIDTH,
                                               Constants.WINDOW_HEIGHT))
         translucent_surface.set_alpha(128)  # alpha level
