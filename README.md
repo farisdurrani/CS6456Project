@@ -21,7 +21,7 @@ and mouse.<br>
 2. Run the `spaceship_battle.py` file.
 
 ## How to play
-### Basics
+### Eye Gaze for Main Control
 ![](readme_assets/play_general.gif)
 Use your eyes to move the ship around. The program tracks the coordinates of 
 your right eye and translates those coordinates to positions on the game screen,
@@ -33,6 +33,7 @@ or until they die.
 ### One Finger Controls
 This game also allows finger gestures (some systems detect a mouse pointer to 
 be equivalent to a single finger gesture).
+
 #### Left (<)
 ![](readme_assets/left.gif)
 Using a finger, a user can draw a "<" symbol anywhere on the screen to pull up 
