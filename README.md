@@ -27,7 +27,6 @@ environment by entering the following code in the Terminal:
 2. `source venv/bin/activate`
 3. `pip install -r requirements.txt`
 
-
 ## Main libraries (from `requirements.txt`)
 1. cmake
 2. dlib==19.16.0

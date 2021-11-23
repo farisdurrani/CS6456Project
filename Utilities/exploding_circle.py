@@ -9,6 +9,8 @@ class ExplodingCircle:
     Draws a shrinking circle at the position where enemy ship or asteroid dies.
     Once the circle shrinks to zero, it ceases to exist and will not be
     rendered.
+
+    The current implementation of this program does not implement this class.
     """
     def __init__(self, center: List[int]):
         self.INITIAL_RADIUS = 25
