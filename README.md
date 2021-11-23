@@ -7,7 +7,7 @@
 </h1>
 
 
-<h4 align="center">A multi-user input space shooting game</h4>
+<h4 align="center">A multi-gesture input space-shooting game</h4>
 
 A single-player game where you control the spaceship using your eyes, fingers, 
 and mouse.<br>
@@ -19,6 +19,14 @@ and mouse.<br>
 ## How to run
 1. Install the dependencies in `requirements.txt`. Runs on Python 3.6.8.
 2. Run the `spaceship_battle.py` file.
+
+### Running in a virtual environment
+To reduce possible build problems, you may build the code in a virtual Python 
+environment by entering the following code in the Terminal:
+1. `python3.6 -m venv venv`
+2. `source venv/bin/activate`
+3. `pip install -r requirements.txt`
+
 
 ## Main libraries (from `requirements.txt`)
 1. cmake
