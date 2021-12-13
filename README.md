@@ -14,7 +14,8 @@ and mouse.<br>
 
 **Source:** https://github.com/farisdurrani/CS6456Project <br>
 **Authors:** [Faris Durrani](https://github.com/farisdurrani/), 
-[Rishabh Ghora](https://github.com/RishabhGhora)
+[Rishabh Ghora](https://github.com/RishabhGhora) <br>
+**Developed:** Sep 30, 2021 – Nov 23, 2021
 
 ## How to run
 1. Install the dependencies in `requirements.txt`. Runs on Python 3.6.8.
